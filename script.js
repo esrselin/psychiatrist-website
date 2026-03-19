@@ -81,8 +81,9 @@ window.addEventListener("hashchange", () => {
 function smoothScrollToSection(targetId) {
   const targetElement = document.getElementById(targetId);
   if (targetElement) {
-    const headerHeight = siteHeader.offsetHeight;
-    const targetPosition = targetElement.offsetTop - headerHeight - 20;
+    const headerHeight = siteHeader ? siteHeader.offsetHeight : 0;
+    // Scroll to section top with just header offset, no extra buffer
+    const targetPosition = Math.max(0, targetElement.offsetTop - headerHeight);
     window.scrollTo({
       top: targetPosition,
       behavior: "smooth"
@@ -167,6 +168,11 @@ document.querySelectorAll(".desktop-nav a").forEach((link) => {
     
     smoothScrollToSection(targetId);
     window.history.pushState(null, null, href);
+    
+    // Update active dot immediately
+    setTimeout(() => {
+      updateActiveDot();
+    }, 50);
   });
 });
 
