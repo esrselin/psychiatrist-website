@@ -18,6 +18,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
 }
 
 body {
@@ -64,6 +65,8 @@ textarea {
 .section {
   padding: 72px 0;
   position: relative;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .fit-section {
@@ -159,7 +162,12 @@ textarea {
   width: min(1140px, calc(100% - 32px));
   margin: 0 auto;
   overflow: hidden;
-  transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), padding 0.5s ease, border-radius 0.5s ease, justify-content 0.5s ease;
+  transition:
+    width 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.5s ease,
+    border-radius 0.5s ease,
+    justify-content 0.5s ease;
 }
 
 .nav-wrap.collapsed {
@@ -305,9 +313,17 @@ textarea {
   transition: 0.25s ease;
 }
 
-.hamburger span:nth-child(1) { top: 16px; }
-.hamburger span:nth-child(2) { top: 23px; }
-.hamburger span:nth-child(3) { top: 30px; }
+.hamburger span:nth-child(1) {
+  top: 16px;
+}
+
+.hamburger span:nth-child(2) {
+  top: 23px;
+}
+
+.hamburger span:nth-child(3) {
+  top: 30px;
+}
 
 .mobile-menu {
   display: none;
@@ -364,7 +380,9 @@ textarea {
 }
 
 @keyframes blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 .hero-text {
@@ -631,15 +649,6 @@ textarea {
   outline: none;
 }
 
-.contact-form textarea {
-  width: 100%;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.8);
-  padding: 14px 16px;
-  border-radius: 16px;
-  outline: none;
-}
-
 .contact-form input:focus,
 .contact-form textarea:focus {
   border-color: #bca0ff;
@@ -836,7 +845,7 @@ textarea {
   border-radius: 50%;
   pointer-events: none;
   background:
-    radial-gradient(circle, rgba(226, 245, 164, 0.22) 0%, rgba(255, 243, 157, 0.16) 30%, rgba(255,255,255,0.1) 48%, transparent 72%);
+    radial-gradient(circle, rgba(226, 245, 164, 0.22) 0%, rgba(255, 243, 157, 0.16) 30%, rgba(255, 255, 255, 0.1) 48%, transparent 72%);
   transform: translate(-50%, -50%);
   filter: blur(20px);
   z-index: -2;
@@ -959,10 +968,19 @@ textarea {
   transform: translateY(0);
 }
 
-.delay-1 { transition-delay: 0.12s; }
-.delay-2 { transition-delay: 0.22s; }
+.delay-1 {
+  transition-delay: 0.12s;
+}
+
+.delay-2 {
+  transition-delay: 0.22s;
+}
 
 @media (max-width: 1024px) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+
   .desktop-nav,
   .nav-actions .btn,
   .nav-pin {

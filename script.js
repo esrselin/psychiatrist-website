@@ -13,7 +13,6 @@ const modalClose = document.getElementById("modalClose");
 const modalTitle = document.getElementById("modalTitle");
 const modalText = document.getElementById("modalText");
 const blogButtons = document.querySelectorAll(".blog-read");
-const logoDot = document.querySelector(".logo-dot");
 const privacyModal = document.getElementById("privacyModal");
 const privacyModalOverlay = document.getElementById("privacyModalOverlay");
 const privacyModalClose = document.getElementById("privacyModalClose");
@@ -56,38 +55,66 @@ function typeEffect() {
 
 typeEffect();
 
-// Handle URL hash on page load - always start from home
 window.addEventListener("load", () => {
-  // Reset to home when page loads
-  window.location.hash = "#home";
+  window.history.replaceState(null, null, "#home");
   window.scrollTo(0, 0);
+  updateActiveDot();
+  handleHeaderVisibility();
 });
 
-// Also handle when hash changes while on page
 window.addEventListener("hashchange", () => {
   const hash = window.location.hash;
-  if (hash && hash !== "#home") {
+  if (hash) {
     const targetId = hash.replace("#", "");
     const targetElement = document.getElementById(targetId);
+
     if (targetElement) {
       setTimeout(() => {
         smoothScrollToSection(targetId);
-      }, 100);
+      }, 50);
     }
   }
 });
 
-// Helper function for smooth scroll with header offset
 function smoothScrollToSection(targetId) {
   const targetElement = document.getElementById(targetId);
+
   if (targetElement) {
-    const headerHeight = siteHeader ? siteHeader.offsetHeight : 0;
-    // Scroll to section top with just header offset, no extra buffer
-    const targetPosition = Math.max(0, targetElement.offsetTop - headerHeight);
-    window.scrollTo({
-      top: targetPosition,
-      behavior: "smooth"
+    targetElement.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
     });
+  }
+}
+
+function handleHeaderBySection(targetId) {
+  if (targetId === "home") {
+    siteHeader.style.display = "flex";
+    siteHeader.style.opacity = "1";
+    siteHeader.style.pointerEvents = "auto";
+  } else {
+    siteHeader.style.opacity = "0";
+    siteHeader.style.pointerEvents = "none";
+  }
+}
+
+function handleHeaderVisibility() {
+  const homeSection = document.getElementById("home");
+  if (!homeSection) return;
+
+  const homeRect = homeSection.getBoundingClientRect();
+
+  if (homeRect.top <= 0 && homeRect.bottom > 120) {
+    siteHeader.style.display = "flex";
+    siteHeader.style.opacity = "1";
+    siteHeader.style.pointerEvents = "auto";
+  } else if (homeRect.top > 0) {
+    siteHeader.style.display = "flex";
+    siteHeader.style.opacity = "1";
+    siteHeader.style.pointerEvents = "auto";
+  } else {
+    siteHeader.style.opacity = "0";
+    siteHeader.style.pointerEvents = "none";
   }
 }
 
@@ -98,93 +125,66 @@ hamburger.addEventListener("click", () => {
 mobileMenu.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
+
     mobileMenu.classList.remove("open");
+
     const href = link.getAttribute("href");
     const targetId = href.replace("#", "");
-    
-    // Show navbar if returning to home, hide for other sections
-    if (targetId === "home") {
-      siteHeader.style.display = "flex";
-      siteHeader.style.opacity = "1";
-      siteHeader.style.pointerEvents = "auto";
-    } else {
-      // Hide navbar for non-home sections with delay
-      setTimeout(() => {
-        siteHeader.style.opacity = "0";
-        siteHeader.style.pointerEvents = "none";
-      }, 100);
-    }
-    
+
+    handleHeaderBySection(targetId);
     smoothScrollToSection(targetId);
     window.history.pushState(null, null, href);
+
+    setTimeout(() => {
+      updateActiveDot();
+    }, 400);
   });
 });
 
-
-// Side dots navigation
 dots.forEach((dot) => {
   dot.addEventListener("click", (e) => {
     e.preventDefault();
+
     const href = dot.getAttribute("href");
     const targetId = href.replace("#", "");
-    
-    // Show navbar if returning to home, hide for other sections
-    if (targetId === "home") {
-      siteHeader.style.display = "flex";
-      siteHeader.style.opacity = "1";
-      siteHeader.style.pointerEvents = "auto";
-    } else {
-      // Hide navbar for non-home sections with delay
-      setTimeout(() => {
-        siteHeader.style.opacity = "0";
-        siteHeader.style.pointerEvents = "none";
-      }, 100);
-    }
-    
+
+    handleHeaderBySection(targetId);
     smoothScrollToSection(targetId);
     window.history.pushState(null, null, href);
+
+    setTimeout(() => {
+      updateActiveDot();
+    }, 400);
   });
 });
 
-// Desktop nav links
 document.querySelectorAll(".desktop-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
+
     const href = link.getAttribute("href");
     const targetId = href.replace("#", "");
-    
-    // Show navbar if returning to home, hide for other sections
-    if (targetId === "home") {
-      siteHeader.style.display = "flex";
-      siteHeader.style.opacity = "1";
-      siteHeader.style.pointerEvents = "auto";
-    } else {
-      // Hide navbar for non-home sections with delay
-      setTimeout(() => {
-        siteHeader.style.opacity = "0";
-        siteHeader.style.pointerEvents = "none";
-      }, 100);
-    }
-    
+
+    handleHeaderBySection(targetId);
     smoothScrollToSection(targetId);
     window.history.pushState(null, null, href);
-    
-    // Update active dot immediately
+
     setTimeout(() => {
       updateActiveDot();
-    }, 50);
+    }, 400);
   });
 });
 
-// Logo click
 document.querySelector(".logo").addEventListener("click", (e) => {
   e.preventDefault();
-  // Show navbar when returning to home
-  siteHeader.style.display = "flex";
-  siteHeader.style.opacity = "1";
-  siteHeader.style.pointerEvents = "auto";
+
+  handleHeaderBySection("home");
   smoothScrollToSection("home");
   window.history.pushState(null, null, "#home");
+
+  setTimeout(() => {
+    updateActiveDot();
+  }, 400);
 });
 
 window.addEventListener("scroll", () => {
@@ -194,23 +194,7 @@ window.addEventListener("scroll", () => {
     backToTop.classList.remove("show");
   }
 
-  // Show/hide navbar based on scroll position with fade animation
-  const homeSection = document.getElementById("home");
-  if (homeSection) {
-    const homeSectionBottom = homeSection.offsetTop + homeSection.offsetHeight;
-    
-    if (window.scrollY < homeSectionBottom) {
-      // In home section - show navbar with animation
-      siteHeader.style.opacity = "1";
-      siteHeader.style.pointerEvents = "auto";
-      siteHeader.style.display = "flex";
-    } else {
-      // Below home section - hide navbar with animation
-      siteHeader.style.opacity = "0";
-      siteHeader.style.pointerEvents = "none";
-      // Keep display for smooth fade, don't set to none immediately
-    }
-  }
+  handleHeaderVisibility();
 
   if (!navPinned) {
     if (window.scrollY > 70 && !navCollapsed) {
@@ -256,13 +240,18 @@ function updateActiveDot() {
   let currentId = "";
 
   sections.forEach((section) => {
-    const sectionTop = section.offsetTop;
-    if (window.scrollY >= sectionTop - 180) {
+    const rect = section.getBoundingClientRect();
+    const triggerPoint = window.innerHeight * 0.2;
+
+    if (rect.top <= triggerPoint && rect.bottom > triggerPoint) {
       currentId = section.getAttribute("id");
     }
   });
 
-  // Update URL when scrolling
+  if (!currentId && sections.length > 0) {
+    currentId = sections[0].getAttribute("id");
+  }
+
   if (currentId) {
     window.history.replaceState(null, null, `#${currentId}`);
   }
@@ -270,6 +259,7 @@ function updateActiveDot() {
   dots.forEach((dot) => {
     dot.classList.remove("active");
     const href = dot.getAttribute("href").replace("#", "");
+
     if (href === currentId) {
       dot.classList.add("active");
     }
@@ -296,12 +286,6 @@ function closeModal() {
 modalClose.addEventListener("click", closeModal);
 blogModalOverlay.addEventListener("click", closeModal);
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    closeModal();
-  }
-});
-
 function openPrivacyModal() {
   privacyModal.classList.add("open");
   document.body.style.overflow = "hidden";
@@ -323,30 +307,21 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// Footer links navigation
 document.querySelectorAll(".site-footer a[href^='#']").forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
+
     const href = link.getAttribute("href");
     const targetId = href.replace("#", "");
-    
-    // Show navbar if returning to home, hide for other sections
-    if (targetId === "home") {
-      siteHeader.style.display = "flex";
-      siteHeader.style.opacity = "1";
-      siteHeader.style.pointerEvents = "auto";
-    } else {
-      // Hide navbar for non-home sections with delay
-      setTimeout(() => {
-        siteHeader.style.opacity = "0";
-        siteHeader.style.pointerEvents = "none";
-      }, 100);
-    }
-    
+
+    handleHeaderBySection(targetId);
     smoothScrollToSection(targetId);
     window.history.pushState(null, null, href);
+
+    setTimeout(() => {
+      updateActiveDot();
+    }, 400);
   });
 });
-
 
 updateActiveDot();
