@@ -56,11 +56,17 @@ function typeEffect() {
 
 typeEffect();
 
-// Handle URL hash on page load - reset to home
-function handleHashNavigation() {
+// Handle URL hash on page load - always start from home
+window.addEventListener("load", () => {
+  // Reset to home when page loads
+  window.location.hash = "#home";
+  window.scrollTo(0, 0);
+});
+
+// Also handle when hash changes while on page
+window.addEventListener("hashchange", () => {
   const hash = window.location.hash;
   if (hash && hash !== "#home") {
-    // Smooth scroll to the section
     const targetId = hash.replace("#", "");
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
@@ -69,7 +75,7 @@ function handleHashNavigation() {
       }, 100);
     }
   }
-}
+});
 
 // Helper function for smooth scroll with header offset
 function smoothScrollToSection(targetId) {
@@ -84,14 +90,6 @@ function smoothScrollToSection(targetId) {
   }
 }
 
-// Handle hash navigation on page load
-window.addEventListener("load", handleHashNavigation);
-
-// Also handle when hash changes while on page
-window.addEventListener("hashchange", () => {
-  handleHashNavigation();
-});
-
 hamburger.addEventListener("click", () => {
   mobileMenu.classList.toggle("open");
 });
@@ -102,10 +100,25 @@ mobileMenu.querySelectorAll("a").forEach((link) => {
     mobileMenu.classList.remove("open");
     const href = link.getAttribute("href");
     const targetId = href.replace("#", "");
+    
+    // Show navbar if returning to home, hide for other sections
+    if (targetId === "home") {
+      siteHeader.style.display = "flex";
+      siteHeader.style.opacity = "1";
+      siteHeader.style.pointerEvents = "auto";
+    } else {
+      // Hide navbar for non-home sections with delay
+      setTimeout(() => {
+        siteHeader.style.opacity = "0";
+        siteHeader.style.pointerEvents = "none";
+      }, 100);
+    }
+    
     smoothScrollToSection(targetId);
     window.history.pushState(null, null, href);
   });
 });
+
 
 // Side dots navigation
 dots.forEach((dot) => {
@@ -113,6 +126,20 @@ dots.forEach((dot) => {
     e.preventDefault();
     const href = dot.getAttribute("href");
     const targetId = href.replace("#", "");
+    
+    // Show navbar if returning to home, hide for other sections
+    if (targetId === "home") {
+      siteHeader.style.display = "flex";
+      siteHeader.style.opacity = "1";
+      siteHeader.style.pointerEvents = "auto";
+    } else {
+      // Hide navbar for non-home sections with delay
+      setTimeout(() => {
+        siteHeader.style.opacity = "0";
+        siteHeader.style.pointerEvents = "none";
+      }, 100);
+    }
+    
     smoothScrollToSection(targetId);
     window.history.pushState(null, null, href);
   });
@@ -124,6 +151,20 @@ document.querySelectorAll(".desktop-nav a").forEach((link) => {
     e.preventDefault();
     const href = link.getAttribute("href");
     const targetId = href.replace("#", "");
+    
+    // Show navbar if returning to home, hide for other sections
+    if (targetId === "home") {
+      siteHeader.style.display = "flex";
+      siteHeader.style.opacity = "1";
+      siteHeader.style.pointerEvents = "auto";
+    } else {
+      // Hide navbar for non-home sections with delay
+      setTimeout(() => {
+        siteHeader.style.opacity = "0";
+        siteHeader.style.pointerEvents = "none";
+      }, 100);
+    }
+    
     smoothScrollToSection(targetId);
     window.history.pushState(null, null, href);
   });
@@ -132,6 +173,10 @@ document.querySelectorAll(".desktop-nav a").forEach((link) => {
 // Logo click
 document.querySelector(".logo").addEventListener("click", (e) => {
   e.preventDefault();
+  // Show navbar when returning to home
+  siteHeader.style.display = "flex";
+  siteHeader.style.opacity = "1";
+  siteHeader.style.pointerEvents = "auto";
   smoothScrollToSection("home");
   window.history.pushState(null, null, "#home");
 });
@@ -143,21 +188,21 @@ window.addEventListener("scroll", () => {
     backToTop.classList.remove("show");
   }
 
-  // Show/hide navbar based on scroll position
+  // Show/hide navbar based on scroll position with fade animation
   const homeSection = document.getElementById("home");
   if (homeSection) {
     const homeSectionBottom = homeSection.offsetTop + homeSection.offsetHeight;
     
     if (window.scrollY < homeSectionBottom) {
-      // In home section - show navbar
-      siteHeader.style.display = "flex";
+      // In home section - show navbar with animation
       siteHeader.style.opacity = "1";
       siteHeader.style.pointerEvents = "auto";
+      siteHeader.style.display = "flex";
     } else {
-      // Below home section - hide navbar
-      siteHeader.style.display = "none";
+      // Below home section - hide navbar with animation
       siteHeader.style.opacity = "0";
       siteHeader.style.pointerEvents = "none";
+      // Keep display for smooth fade, don't set to none immediately
     }
   }
 
@@ -278,9 +323,24 @@ document.querySelectorAll(".site-footer a[href^='#']").forEach((link) => {
     e.preventDefault();
     const href = link.getAttribute("href");
     const targetId = href.replace("#", "");
+    
+    // Show navbar if returning to home, hide for other sections
+    if (targetId === "home") {
+      siteHeader.style.display = "flex";
+      siteHeader.style.opacity = "1";
+      siteHeader.style.pointerEvents = "auto";
+    } else {
+      // Hide navbar for non-home sections with delay
+      setTimeout(() => {
+        siteHeader.style.opacity = "0";
+        siteHeader.style.pointerEvents = "none";
+      }, 100);
+    }
+    
     smoothScrollToSection(targetId);
     window.history.pushState(null, null, href);
   });
 });
+
 
 updateActiveDot();
