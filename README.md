@@ -12,12 +12,12 @@ cPanel) olduğu gibi yüklenebilir.
 
 Tek yapılandırma noktası burasıdır.
 
-| Alan | Ne yapmalı |
-|---|---|
-| `web3formsAccessKey` | [web3forms.com](https://web3forms.com) → "Create Access Key" → e-posta olarak `baris.karahuseyin28@gmail.com` girin → doğrulama linkine tıklayın → anahtarı buraya yapıştırın. **Boş bırakılırsa form otomatik olarak `mailto:` yedeğine düşer, mesaj kaybolmaz.** |
-| `calendlyUrl` | Şu an `https://calendly.com/seliinakgul/30min` girili. Kendi hesabınıza geçtiğinizde bu linki değiştirin. **Boş bırakılırsa "Randevu" bölümü görünmeye devam eder, takvim yerine telefon / WhatsApp / form seçenekleri gösterilir.** |
-| `ga4MeasurementId` | İsteğe bağlı. `G-XXXXXXXXXX`. Yalnızca ziyaretçi çerez onayı verirse yüklenir. |
-| `phoneRaw` / `whatsappNumber` | Numara değişirse güncelleyin. |
+| Alan                          | Ne yapmalı                                                                                                                                                                                                                                                         |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `web3formsAccessKey`          | [web3forms.com](https://web3forms.com) → "Create Access Key" → e-posta olarak `baris.karahuseyin28@gmail.com` girin → doğrulama linkine tıklayın → anahtarı buraya yapıştırın. **Boş bırakılırsa form otomatik olarak `mailto:` yedeğine düşer, mesaj kaybolmaz.** |
+| `calendlyUrl`                 | Şu an `https://calendly.com/seliinakgul/30min` girili. Kendi hesabınıza geçtiğinizde bu linki değiştirin. **Boş bırakılırsa "Randevu" bölümü görünmeye devam eder, takvim yerine telefon / WhatsApp / form seçenekleri gösterilir.**                               |
+| `ga4MeasurementId`            | İsteğe bağlı. `G-XXXXXXXXXX`. Yalnızca ziyaretçi çerez onayı verirse yüklenir.                                                                                                                                                                                     |
+| `phoneRaw` / `whatsappNumber` | Numara değişirse güncelleyin.                                                                                                                                                                                                                                      |
 
 ### 2. Alan adını değiştirin
 
@@ -27,7 +27,7 @@ Tüm HTML dosyalarında ve `sitemap.xml` + `robots.txt` içinde geçen
 
 ### 3. Profil fotoğrafını değiştirin
 
-`about-baris.png` yerine profesyonel bir portre koyun.
+`about-baris.jpeg` yerine profesyonel bir portre koyun.
 
 - **Format:** WebP veya JPEG (PNG değil)
 - **Boyut:** ~4:5 dikey, 800×1000 px civarı
@@ -61,7 +61,7 @@ Siteyi doğrulayın ve `sitemap.xml` adresini gönderin.
 ├── favicon.svg
 ├── robots.txt                    Arama + üretken AI botlarına açık
 ├── sitemap.xml
-├── about-baris.png               Profil fotoğrafı (değiştirilecek)
+├── about-baris.jpeg               Profil fotoğrafı (değiştirilecek)
 ├── terap.jpg                     Psikoterapi görseli
 └── blog/
     ├── kaygi-nedir-belirtileri-ve-basa-cikma-yollari.html

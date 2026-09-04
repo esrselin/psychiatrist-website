@@ -700,9 +700,21 @@
     if (calendlyBlock) calendlyBlock.hidden = false;
 
     var btn = $("loadCalendly");
+    var intro = $("calendlyIntro");
     if (btn) btn.addEventListener("click", loadCalendly);
 
-    if (getConsent() === "all") loadCalendly();
+    // Takvim VARSAYILAN OLARAK yüklenir. Randevu takvimi, ziyaretçinin o bölüme
+    // gelme amacının kendisi; analitik gibi ikincil bir izleme aracı değil.
+    // Yalnızca ziyaretçi açıkça "yalnızca zorunlu çerezler" dediyse tıklamaya
+    // bağlı kalır ve gerekçesi gösterilir.
+    if (getConsent() === "necessary") {
+      if (btn) btn.hidden = false;
+      if (intro) intro.hidden = false;
+    } else {
+      if (btn) btn.hidden = true;
+      if (intro) intro.hidden = true;
+      loadCalendly();
+    }
   }
 
   function autoLoadThirdParty() {
