@@ -122,8 +122,12 @@ npx serve .
 Zorunlu olmayan hiçbir üçüncü taraf içeriği onay alınmadan yüklenmez:
 
 - **Google Maps** → "Haritayı yükle" düğmesine basılmadan yüklenmez
-- **Calendly** → "Randevu takvimini yükle" düğmesine basılmadan yüklenmez
 - **Google Analytics** → yalnızca çerez bildiriminde "Tümünü kabul et" seçilirse yüklenir
+- **Calendly** → varsayılan olarak doğrudan yüklenir. Randevu takvimi, ziyaretçinin
+  o bölüme gelme amacının kendisi olduğu için analitik gibi ikincil bir izleme
+  aracından ayrı değerlendirildi. Ziyaretçi çerez bildiriminde açıkça
+  **"Yalnızca zorunlu çerezler"** derse takvim yüklenmez; yerine gerekçesiyle
+  birlikte "Randevu takvimini yükle" düğmesi gösterilir.
 
 Tercih `localStorage` içinde `bk-consent-v1` anahtarıyla saklanır; ziyaretçi
 sayfa altındaki "Çerez tercihlerini değiştir" bağlantısıyla kararını değiştirebilir.

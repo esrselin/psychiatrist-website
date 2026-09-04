@@ -77,6 +77,13 @@ img {
   max-width: 100%;
 }
 
+/* Tarayıcının [hidden] kuralı, .btn gibi açık `display` veren yazar
+   kurallarının altında kalıyor ve gizlenmesi gereken öğeler görünür
+   kalıyordu (ör. takvim yüklendikten sonra "takvimi yükle" butonu). */
+[hidden] {
+  display: none !important;
+}
+
 /* --------------------------------------------------------------------------
    Erişilebilirlik temelleri
    -------------------------------------------------------------------------- */
