@@ -903,13 +903,66 @@
 
       var v = readValues();
 
+      setBusy(true);
+      setStatus("info", "Mesajınız gönderiliyor…");
+
+      /* 1) Önce sitenin kendi sunucusuna (yönetim panelinde görünür).
+            Sunucu yoksa / erişilemiyorsa Web3Forms ya da mailto yedeğine düşer. */
+      fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: v.name,
+          phone: v.phone,
+          email: v.email,
+          message: v.message,
+          consent: true
+        })
+      })
+        .then(function (res) {
+          if (res.status === 429 || res.status === 400) {
+            return res.json().then(function (d) {
+              throw new Error((d && d.error) || "Gönderilemedi");
+            });
+          }
+          if (!res.ok) throw new Error("no-backend");
+          return res.json();
+        })
+        .then(function (data) {
+          if (!data || !data.ok) throw new Error("no-backend");
+          onSuccess();
+        })
+        .catch(function (err) {
+          if (err && err.message && err.message !== "no-backend" && err.message !== "Failed to fetch") {
+            setBusy(false);
+            setStatus("error", err.message);
+            return;
+          }
+          sendViaWeb3Forms(v);
+        });
+    });
+
+    function onSuccess() {
+      setBusy(false);
+      form.reset();
+      fields.forEach(function (field) {
+        showFieldError(field, "");
+      });
+      setStatus(
+        "success",
+        "Mesajınız iletildi. En kısa sürede size geri dönüş yapacağım. " +
+          "Acil bir durumdaysanız lütfen 112'yi arayın."
+      );
+      if (window.gtag) window.gtag("event", "contact_form_submit");
+    }
+
+    /* 2) Yedek yol: Web3Forms (anahtar varsa) ya da mailto */
+    function sendViaWeb3Forms(v) {
       if (!CFG.web3formsAccessKey) {
+        setBusy(false);
         mailtoFallback(v);
         return;
       }
-
-      setBusy(true);
-      setStatus("info", "Mesajınız gönderiliyor…");
 
       var payload = {
         access_key: CFG.web3formsAccessKey,
@@ -940,16 +993,7 @@
           setBusy(false);
 
           if (data && data.success) {
-            form.reset();
-            fields.forEach(function (field) {
-              showFieldError(field, "");
-            });
-            setStatus(
-              "success",
-              "Mesajınız iletildi. En kısa sürede size geri dönüş yapacağım. " +
-                "Acil bir durumdaysanız lütfen 112'yi arayın."
-            );
-            if (window.gtag) window.gtag("event", "contact_form_submit");
+            onSuccess();
           } else {
             setStatus(
               "error",
@@ -967,7 +1011,7 @@
             mailtoFallback(v);
           }, 1200);
         });
-    });
+    }
   }
 
   /* ========================================================================

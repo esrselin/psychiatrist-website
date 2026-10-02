@@ -1,8 +1,82 @@
 # Uzm. Psk. Barış Karahüseyin — Web Sitesi
 
-Statik (build gerektirmeyen) tek sayfa + blog yapısı. HTML / CSS / vanilla JS.
-Herhangi bir statik hosting'e (Netlify, Vercel, Cloudflare Pages, GitHub Pages,
-cPanel) olduğu gibi yüklenebilir.
+Tek sayfa + blog yapısı (HTML / CSS / vanilla JS) ve üzerine küçük bir Node.js
+sunucusu: danışan mesajlarını kaydeden ve blog yazılarını yönetmenizi sağlayan
+**yönetim paneli** (`/admin`).
+
+> Sunucu olmadan da site statik olarak çalışır (form bu durumda Web3Forms /
+> mailto yedeğine düşer, blog kartları HTML'deki hâliyle görünür). Panel ve
+> mesaj kutusu için Node sunucusunun çalışıyor olması gerekir.
+
+---
+
+## 🛠 Yönetim paneli
+
+### Çalıştırma
+
+```bash
+npm install
+npm start
+```
+
+- Site: `http://localhost:3000`
+- Panel: `http://localhost:3000/admin/`
+- Port değiştirmek için: `PORT=8080 npm start`
+- Veri klasörlerini taşımak için: `DATA_DIR=/kalici/disk/data UPLOAD_DIR=/kalici/disk/uploads npm start`
+  (göreli yol verilirse proje köküne göre çözülür; site kökünün altındaysa dışarıya kapatılır)
+- Kod değişikliğinden sonra sunucuyu durdurup (`Ctrl+C`) yeniden `npm start` deyin; şablonlar bellekte tutulur.
+
+**İlk açılış:** panel sizden bir yönetici parolası belirlemenizi ister (en az 8
+karakter). Sonraki girişlerde bu parola kullanılır; "Ayarlar" sayfasından
+değiştirebilirsiniz. 6 hatalı denemeden sonra 10 dakika bekleme uygulanır.
+
+### Neler yapılır
+
+| Bölüm           | Ne işe yarar                                                                                                                                           |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Genel bakış     | Yeni mesaj sayısı, son mesajlar, son düzenlenen yazılar.                                                                                               |
+| Mesajlar        | İletişim formundan gelen mesajlar. Açınca "okundu" olur; Yanıtlandı / Arşiv durumu, tek tık ara / WhatsApp / e-posta, yalnızca sizin gördüğünüz not.   |
+| Blog yazıları   | Yazı ekle, düzenle, taslak olarak sakla, yayınla, önizle. Görsel editör (Quill) veya ham HTML. Kapak görseli yükleme, SSS bölümü, meta açıklama, slug. |
+| Ayarlar         | Parola değiştirme, sunucu bilgileri.                                                                                                                   |
+
+Yayınlanan yazılar `/blog/<slug>.html` adresinde, elle yazılmış yazılarla aynı
+tasarımda üretilir; ana sayfa ve `blog.html` kartları, `sitemap.xml` ve JSON-LD
+yapısal veri otomatik güncellenir.
+
+**Mevcut 4 yazı** ilk çalıştırmada panele aktarıldı ve artık oradan düzenlenir.
+`blog/*.html` dosyaları diskte duruyor ama sunucu aynı adreste veritabanındaki
+sürümü gösterir. Bu yazılar özel kutular (tanım kutusu, içindekiler) içerdiği
+için editör onları **HTML** sekmesinde açar; görsel moda geçerseniz kutular sade
+paragrafa dönüşür (uyarı verilir).
+
+### Veriler ve yedek
+
+- `data/` — mesajlar, yazılar, parola özeti, oturum anahtarı. **Git'e girmez.**
+- `uploads/` — panelden yüklenen görseller. **Git'e girmez.**
+
+Yedek almak için bu iki klasörü kopyalamanız yeterli.
+
+### E-posta bildirimi
+
+Mesajlar her durumda panele düşer. Ek olarak her mesaj için e-posta da almak
+isterseniz `config.js` içindeki `web3formsAccessKey` alanını doldurun; sunucu
+mesajı kaydettikten sonra Web3Forms'a da iletir.
+
+### Canlıya alma
+
+Panel için Node.js çalıştıran bir ortam gerekir: VPS (pm2 ile), Render,
+Railway, Fly.io ya da Node destekli cPanel. Örnek (pm2):
+
+```bash
+npm install --omit=dev
+PORT=3000 pm2 start server.js --name psikolog-site
+```
+
+Sunucunun önüne HTTPS veren bir reverse proxy (Nginx / Caddy / platformun
+kendi proxy'si) koyun; oturum çerezi HTTPS'te otomatik olarak `Secure` işaretlenir.
+Dosya tabanlı veri kullanıldığı için tek sunucu örneği çalıştırın ve `data/` +
+`uploads/` klasörlerinin kalıcı diskte olduğundan emin olun (Render/Railway'de
+"persistent disk" / "volume").
 
 ---
 
@@ -51,6 +125,12 @@ Siteyi doğrulayın ve `sitemap.xml` adresini gönderin.
 
 ```
 .
+├── server.js                     Node sunucusu (site + panel API)
+├── package.json
+├── admin/                        Yönetim paneli (index.html, admin.js, admin.css, vendor/quill)
+├── lib/                          Sunucu modülleri (store, auth, render, importLegacy)
+├── data/                         Mesajlar, yazılar, parola — git'e girmez
+├── uploads/                      Panelden yüklenen görseller — git'e girmez
 ├── index.html                    Ana sayfa (tek sayfa scroll)
 ├── blog.html                     Blog liste sayfası
 ├── kvkk-aydinlatma-metni.html    Hukuki — KVKK m.10 aydınlatma
@@ -74,19 +154,17 @@ Siteyi doğrulayın ve `sitemap.xml` adresini gönderin.
 
 ## ✍️ Yeni blog yazısı eklemek
 
-1. `blog/` altındaki mevcut bir yazıyı kopyalayın, yeni ada kaydedin
-   (URL slug'ı Türkçe karaktersiz ve tire ile ayrılmış olsun).
-2. Şunları güncelleyin: `<title>`, `meta description`, `canonical`, `og:*`,
-   JSON-LD (`headline`, `url`, `datePublished`, `wordCount`, `keywords`),
-   `<h1>`, tarih, içerik ve SSS bölümü.
-3. Kart bloğunu `blog.html` ve — öne çıkarmak isterseniz — `index.html`
-   içindeki `.blog-grid` alanına ekleyin.
-4. `sitemap.xml` dosyasına `<url>` kaydı ekleyin.
+Panelden: **Blog yazıları → + Yeni yazı**. Başlık, kategori, kart özeti,
+giriş paragrafı ve içeriği girin; isterseniz kapak görseli yükleyin ve SSS
+soruları ekleyin. "Önizle" ile yayınlamadan bakabilir, "Taslak olarak kaydet"
+ile sonra devam edebilirsiniz. "Yayınla" dediğiniz anda yazı siteye, ana sayfa
+kartlarına, `blog.html` listesine ve `sitemap.xml`'e düşer; `<title>`, meta
+açıklama, canonical, Open Graph ve `BlogPosting` + `FAQPage` + `BreadcrumbList`
+yapısal verisi otomatik üretilir.
 
 **GEO (üretken arama motorları) için:** Görünür kısımda soru biçiminde `<h2>`
-başlıklar ve bir SSS bölümü, sayfa kaynağında `BlogPosting` + `FAQPage`
-yapısal verisi bulunsun. Sayfadaki SSS metinleriyle JSON-LD içindeki
-cevapların birebir aynı olması gerekiyor.
+başlıklar kullanın ve SSS bölümünü doldurun; SSS cevapları sayfada ve JSON-LD
+içinde birebir aynı çıkar.
 
 **Yazıları birbirine benzetmeyin.** Aynı iskeleti (özet kutusu, içindekiler,
 tanım kutusu, akordeon) her yazıda tekrarlamak metinlere şablon görüntüsü

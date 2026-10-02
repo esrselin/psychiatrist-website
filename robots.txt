@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /api/
 
 # Yapay zeka / uretken arama motorlarina acik (GEO)
 User-agent: GPTBot

@@ -4,3 +4,8 @@ Thumbs.db
 node_modules/
 *.log
 .claude/
+
+# Yönetim paneli verileri (mesajlar, yazılar, parola özeti) — asla paylaşmayın
+data/
+# Panelden yüklenen görseller
+uploads/

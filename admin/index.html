@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Yönetim Paneli · Barış Karahüseyin</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendor/quill.snow.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <!-- Giriş / ilk kurulum -->
+  <div class="gate" id="gate" hidden>
+    <div class="gate-card">
+      <div class="wordmark">
+        <span class="wordmark-dot" aria-hidden="true"></span>
+        <span>Barış Karahüseyin</span>
+      </div>
+      <h1 class="gate-title" id="gateTitle">Panele giriş</h1>
+      <p class="gate-text" id="gateText">Danışan mesajlarını ve blog yazılarını buradan yönetirsiniz.</p>
+      <form id="gateForm" class="gate-form" novalidate>
+        <label for="gatePassword" id="gateLabel">Parola</label>
+        <input type="password" id="gatePassword" autocomplete="current-password" required />
+        <div id="gateConfirmWrap" hidden>
+          <label for="gatePassword2">Parolayı tekrar yazın</label>
+          <input type="password" id="gatePassword2" autocomplete="new-password" />
+        </div>
+        <p class="form-error" id="gateError" role="alert"></p>
+        <button type="submit" class="btn btn-primary btn-block" id="gateSubmit">Giriş yap</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Panel -->
+  <div class="shell" id="shell" hidden>
+    <aside class="rail">
+      <a class="wordmark" href="#/">
+        <span class="wordmark-dot" aria-hidden="true"></span>
+        <span>Barış Karahüseyin</span>
+      </a>
+      <nav class="rail-nav" aria-label="Panel menüsü">
+        <a href="#/" data-route="dashboard">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>
+          <span>Genel bakış</span>
+        </a>
+        <a href="#/mesajlar" data-route="messages">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          <span>Mesajlar</span>
+          <b class="rail-badge" id="railNewCount" hidden>0</b>
+        </a>
+        <a href="#/yazilar" data-route="posts">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><path d="m6 16 10.5-10.5a2.1 2.1 0 0 1 3 3L9 19l-4 1z"/></svg>
+          <span>Blog yazıları</span>
+        </a>
+        <a href="#/ayarlar" data-route="settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+          <span>Ayarlar</span>
+        </a>
+      </nav>
+      <div class="rail-foot">
+        <a href="../" target="_blank" rel="noopener" class="rail-link">Siteyi aç ↗</a>
+        <button type="button" class="rail-link" id="logoutBtn">Çıkış yap</button>
+      </div>
+    </aside>
+
+    <main class="content" id="view" tabindex="-1"></main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 id="modalTitle"></h2>
+      <p id="modalText"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="modalCancel">Vazgeç</button>
+        <button type="button" class="btn btn-danger" id="modalOk">Sil</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="hiddenFile" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+
+  <script src="vendor/quill.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
